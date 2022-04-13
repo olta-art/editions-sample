@@ -20,7 +20,7 @@ if(!contractAddress || !editionNumber){
  console.log("Check search params")
 }
 
-const seededRandom = generateSeededRandomness(contractAddress, editionNumber)
+const seededRandom = generateSeededRandomness("not-so-random-seed-phrase", editionNumber)
 
 const cols = 10
 const rows = 10
@@ -74,7 +74,7 @@ new p5(p => {
         p.rect(0, 0, cellWidth, cellHeight)
         if(isThisEdition) {
           p.fill(0,0,0)
-          p.ellipse(cellWidth/2, cellHeight/2, cellWidth/2, cellWidth/2)
+          p.ellipse(cellWidth/2, cellHeight/2, (cellWidth/2) * 0.8, (cellWidth/2) * 0.8)
         }
         p.pop()
       }

@@ -24,7 +24,7 @@ function sfc32(a, b, c, d) {
   }
 }
 
-export const generateSeededRandomness = (contractAddress, editionNumber) => {
-  const seed = xmur3(`${contractAddress}-${editionNumber}`)
+export const generateSeededRandomness = (seedPhrase, editionNumber) => {
+  const seed = xmur3(`${seedPhrase}-${editionNumber}`)
   return sfc32(seed(), seed(), seed(), seed())
 }
