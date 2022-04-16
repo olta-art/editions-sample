@@ -6,80 +6,81 @@ import {
   fetchQuery
 } from './helpers'
 
-// http://localhost:3000/?id=1&address=0x8f66a247c29a2e4b32da14d94ee96fcae4964370
-// const NFTContractAddress = "0x8f66a247c29a2e4b32da14d94ee96fcae4964370"
-// const editionNumber = 1
+;(async () => {
 
-const {contractAddress, editionNumber} = getUrlParams()
+  // http://localhost:3000/?id=1&address=0x8f66a247c29a2e4b32da14d94ee96fcae4964370
+  // const NFTContractAddress = "0x8f66a247c29a2e4b32da14d94ee96fcae4964370"
+  // const editionNumber = 1
 
-let tokens = null
-fetchQuery(contractAddress)
-  .then((result) => tokens = result)
+  const {contractAddress, editionNumber} = getUrlParams()
 
-if(!contractAddress || !editionNumber){
- console.log("Check search params")
-}
+  let tokens = await fetchQuery(contractAddress)
 
-const seededRandom = generateSeededRandomness("not-so-random-seed-phrase", editionNumber)
-
-const cols = 10
-const rows = 10
-
-new p5(p => {
-  const background = p.color(seededRandom()* 255, seededRandom() * 255, seededRandom()* 255)
-
-  p.setup = function setup() {
-    p.createCanvas(p.windowWidth, p.windowHeight);
+  if(!contractAddress || !editionNumber){
+    console.log("Check search params")
   }
 
-  p.draw = function draw() {
-    const gridWidth =  p.windowWidth * 0.75
-    const gridHeight = p.windowHeight * 0.75
+  const seededRandom = generateSeededRandomness("not-so-random-seed-phrase", editionNumber)
 
-    const cellWidth = gridWidth/rows
-    const cellHeight = gridHeight/cols
+  const cols = 10
+  const rows = 10
 
-    p.background(background)
+  new p5(p => {
+    const background = p.color(seededRandom()* 255, seededRandom() * 255, seededRandom()* 255)
 
-    // center the grid
-    p.push()
-    p.translate((p.windowWidth/2) - (gridWidth/2), (p.windowHeight/2) - (gridHeight/2))
-
-    // draw grid border
-    p.stroke(255, 255, 255, 255)
-    p.noFill()
-    p.rect(0, 0, gridWidth, gridHeight)
-
-    let count = 0
-    // draw cells
-    for (let i = 0; i < rows; i++) {
-      for (let j = 0; j < cols; j++) {
-
-        let isThisEdition = (editionNumber == count + 1)
-
-        p.noFill()
-        if(tokens[count]){
-          // display white if minted
-          p.fill(127)
-
-          // display red if burnt
-          if(tokens[count].owner.id === "0x0000000000000000000000000000000000000000") p.fill(127, 0, 0)
-        }
-        // increment
-        count++
-
-        // render the grid
-        p.push()
-        p.translate(j * cellWidth, i*cellHeight)
-        p.rect(0, 0, cellWidth, cellHeight)
-        if(isThisEdition) {
-          p.fill(0,0,0)
-          p.ellipse(cellWidth/2, cellHeight/2, (cellWidth/2) * 0.8, (cellWidth/2) * 0.8)
-        }
-        p.pop()
-      }
+    p.setup = function setup() {
+      p.createCanvas(p.windowWidth, p.windowHeight);
     }
 
-    p.pop()
-  }
-}, document.getElementById('app'))
+    p.draw = function draw() {
+      const gridWidth =  p.windowWidth * 0.75
+      const gridHeight = p.windowHeight * 0.75
+
+      const cellWidth = gridWidth/rows
+      const cellHeight = gridHeight/cols
+
+      p.background(background)
+
+      // center the grid
+      p.push()
+      p.translate((p.windowWidth/2) - (gridWidth/2), (p.windowHeight/2) - (gridHeight/2))
+
+      // draw grid border
+      p.stroke(255, 255, 255, 255)
+      p.noFill()
+      p.rect(0, 0, gridWidth, gridHeight)
+
+      let count = 0
+      // draw cells
+      for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < cols; j++) {
+
+          let isThisEdition = (editionNumber == count + 1)
+
+          p.noFill()
+          if(tokens[count]){
+            // display white if minted
+            p.fill(127)
+
+            // display red if burnt
+            if(tokens[count].owner.id === "0x0000000000000000000000000000000000000000") p.fill(127, 0, 0)
+          }
+          // increment
+          count++
+
+          // render the grid
+          p.push()
+          p.translate(j * cellWidth, i*cellHeight)
+          p.rect(0, 0, cellWidth, cellHeight)
+          if(isThisEdition) {
+            p.fill(0,0,0)
+            p.ellipse(cellWidth/2, cellHeight/2, (cellWidth/2) * 0.8, (cellWidth/2) * 0.8)
+          }
+          p.pop()
+        }
+      }
+
+      p.pop()
+    }
+  }, document.getElementById('app'))
+})()
