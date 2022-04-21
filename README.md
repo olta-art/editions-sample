@@ -1,12 +1,7 @@
-# Example Artwork [WIP]
+### [WIP] DOTS / Sample Artwork
 
-This is an example artwork setup using vite, p5.js and urql.
+This is an example artwork setup using p5.js to demonstrate how OLTA's editions contract and subgraph API can be used to create dynamic NFT's.
 
-It demonstrates how to use olta's editions contract and subgraph api to create dynamic NFT's
-
-TODO:
-- [ ] local dev env
-- [ ] testnet instructions
-- [ ] improved documenttion
-
-
+- [ ] Describe setup for development.
+- [ ] Fill in TestNet instructions.
+- [ ] Expand documentation.
