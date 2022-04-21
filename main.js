@@ -7,15 +7,16 @@ const NFT_CONTRACT_ADDRESS = "0x8f66a247c29a2e4b32da14d94ee96fcae4964370"
 
 const params = getUrlParams()
 const contractAddress = params.contractAddress ?? NFT_CONTRACT_ADDRESS
-const editionNumber = parseInt(params.editionNumber, 10) ?? EDITION_NO
+const editionNumber = parseInt(params.editionNumber ?? EDITION_NO, 10)
 
-const tokens = fetchQuery(EDITIONS_SUBGRAPH_API, contractAddress)
-  .then(d => d)
+fetchQuery(EDITIONS_SUBGRAPH_API, contractAddress)
+  .then((tokens) => {
+    new p5(dots(tokens), document.getElementById("app"))
+  })
   .catch((e) => {
     console.log(e)
   })
 
-new p5(dots(tokens), document.getElementById("app"))
 
 function dots(data = []) {
   const rand = generateSeededRandomness("not-so-random-seed-phrase", editionNumber)
