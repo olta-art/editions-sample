@@ -1,80 +1,81 @@
-import './style.css'
-import p5 from 'p5'
-import {
-  getUrlParams,
-  generateSeededRandomness,
-  fetchQuery
-} from './helpers'
+import { fetchQuery, generateSeededRandomness, getUrlParams } from "./helper.js"
 
-;(async () => {
+// Some defaults to experiment with.
+const EDITIONS_SUBGRAPH_API = "http://127.0.0.1:8000/subgraphs/name/olta-art/editions-auction-subgraph"
+const EDITION_NO = 1
+const NFT_CONTRACT_ADDRESS = "0x8f66a247c29a2e4b32da14d94ee96fcae4964370"
 
-  // http://localhost:3000/?id=1&address=0x8f66a247c29a2e4b32da14d94ee96fcae4964370
-  // const NFTContractAddress = "0x8f66a247c29a2e4b32da14d94ee96fcae4964370"
-  // const editionNumber = 1
+const params = getUrlParams()
+const contractAddress = params.contractAddress ?? NFT_CONTRACT_ADDRESS
+const editionNumber = parseInt(params.editionNumber, 10) ?? EDITION_NO
 
-  const {contractAddress, editionNumber} = getUrlParams()
+const tokens = fetchQuery(EDITIONS_SUBGRAPH_API, contractAddress)
+  .then(d => d)
+  .catch((e) => {
+    console.log(e)
+  })
 
-  let tokens = await fetchQuery(contractAddress)
+new p5(dots(tokens), document.getElementById("app"))
 
-  if(!contractAddress || !editionNumber){
-    console.log("Check search params")
-  }
-
-  const seededRandom = generateSeededRandomness("not-so-random-seed-phrase", editionNumber)
-
+function dots(data = []) {
+  const rand = generateSeededRandomness("not-so-random-seed-phrase", editionNumber)
   const cols = 10
   const rows = 10
 
-  new p5(p => {
-    const background = p.color(seededRandom()* 255, seededRandom() * 255, seededRandom()* 255)
+  return (p) => {
+    const background = p.color(rand() * 255, rand() * 255, rand() * 255)
 
     p.setup = function setup() {
-      p.createCanvas(p.windowWidth, p.windowHeight);
+      p.createCanvas(p.windowWidth, p.windowHeight)
     }
 
     p.draw = function draw() {
-      const gridWidth =  p.windowWidth * 0.75
+      const gridWidth = p.windowWidth * 0.75
       const gridHeight = p.windowHeight * 0.75
 
-      const cellWidth = gridWidth/rows
-      const cellHeight = gridHeight/cols
+      const cellWidth = gridWidth / rows
+      const cellHeight = gridHeight / cols
 
       p.background(background)
 
-      // center the grid
+      // Center the grid.
       p.push()
-      p.translate((p.windowWidth/2) - (gridWidth/2), (p.windowHeight/2) - (gridHeight/2))
+      p.translate((p.windowWidth / 2) - (gridWidth / 2), (p.windowHeight / 2) - (gridHeight / 2))
 
-      // draw grid border
+      // Draw grid border.
       p.stroke(255, 255, 255, 255)
       p.noFill()
       p.rect(0, 0, gridWidth, gridHeight)
 
       let count = 0
-      // draw cells
+
+      // Draw cells.
       for (let i = 0; i < rows; i++) {
         for (let j = 0; j < cols; j++) {
-
-          let isThisEdition = (editionNumber == count + 1)
+          let isThisEdition = (editionNumber === count + 1)
 
           p.noFill()
-          if(tokens[count]){
-            // display white if minted
+
+          if (data[count]) {
+            // Display white if minted.
             p.fill(127)
 
-            // display red if burnt
-            if(tokens[count].owner.id === "0x0000000000000000000000000000000000000000") p.fill(127, 0, 0)
+            // Display red if burnt.
+            if (data[count].owner.id === "0x0000000000000000000000000000000000000000") {
+              p.fill(127, 0, 0)
+            }
           }
-          // increment
+
           count++
 
-          // render the grid
+          // Render the grid
           p.push()
-          p.translate(j * cellWidth, i*cellHeight)
+          p.translate(j * cellWidth, i * cellHeight)
           p.rect(0, 0, cellWidth, cellHeight)
-          if(isThisEdition) {
-            p.fill(0,0,0)
-            p.ellipse(cellWidth/2, cellHeight/2, (cellWidth/2) * 0.8, (cellWidth/2) * 0.8)
+
+          if (isThisEdition) {
+            p.fill(0, 0, 0)
+            p.ellipse(cellWidth / 2, cellHeight / 2, (cellWidth / 2) * 0.8, (cellWidth / 2) * 0.8)
           }
           p.pop()
         }
@@ -82,5 +83,5 @@ import {
 
       p.pop()
     }
-  }, document.getElementById('app'))
-})()
+  }
+}
