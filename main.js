@@ -9,14 +9,17 @@ const params = getUrlParams()
 const contractAddress = params.contractAddress ?? NFT_CONTRACT_ADDRESS
 const editionNumber = parseInt(params.editionNumber ?? EDITION_NO, 10)
 
-fetchQuery(EDITIONS_SUBGRAPH_API, contractAddress)
-  .then((tokens) => {
-    new p5(dots(tokens), document.getElementById("app"))
-  })
-  .catch((e) => {
-    console.log(e)
-  })
+;(async () => {
+  let tokens
 
+  try {
+    tokens = await fetchQuery(EDITIONS_SUBGRAPH_API, contractAddress)
+  } catch(e) {
+    console.log(e)
+  } finally {
+    new p5(dots(tokens), document.getElementById("app"))
+  }
+})()
 
 function dots(data = []) {
   const rand = generateSeededRandomness("not-so-random-seed-phrase", editionNumber)
@@ -28,6 +31,10 @@ function dots(data = []) {
 
     p.setup = function setup() {
       p.createCanvas(p.windowWidth, p.windowHeight)
+    }
+
+    p.windowResized = function windowResized() {
+      p.resizeCanvas(p.windowWidth, p.windowHeight)
     }
 
     p.draw = function draw() {
@@ -69,7 +76,7 @@ function dots(data = []) {
 
           count++
 
-          // Render the grid
+          // Render the grid.
           p.push()
           p.translate(j * cellWidth, i * cellHeight)
           p.rect(0, 0, cellWidth, cellHeight)
@@ -78,6 +85,7 @@ function dots(data = []) {
             p.fill(0, 0, 0)
             p.ellipse(cellWidth / 2, cellHeight / 2, (cellWidth / 2) * 0.8, (cellWidth / 2) * 0.8)
           }
+
           p.pop()
         }
       }
