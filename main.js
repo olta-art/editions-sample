@@ -1,7 +1,7 @@
 import { fetchQuery, generateSeededRandomness, getUrlParams } from "./helper.js"
 
 // Some defaults to experiment with.
-const EDITIONS_SUBGRAPH_API = "http://127.0.0.1:8000/subgraphs/name/olta-art/editions-auction-subgraph"
+const EDITIONS_SUBGRAPH_API = "http://localhost:8000/subgraphs/name/olta-art/editions-auction-subgraph"
 const EDITION_NO = 1
 const NFT_CONTRACT_ADDRESS = "0x8f66a247c29a2e4b32da14d94ee96fcae4964370"
 
@@ -66,12 +66,12 @@ function dots(data = []) {
 
           if (data[count]) {
             // Display white if minted.
-            p.fill(127)
+            p.fill(255)
+          }
 
-            // Display red if burnt.
-            if (data[count].owner.id === "0x0000000000000000000000000000000000000000") {
-              p.fill(127, 0, 0)
-            }
+          // Display red if burnt.
+          if (data[count]?.owner?.id === "0x0000000000000000000000000000000000000000") {
+            p.fill(255, 0, 0)
           }
 
           count++
