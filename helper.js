@@ -1,13 +1,7 @@
-export function getUrlParams(href = self.location.href) {
-  const url = new URL(href)
+export function getUrlParams(...params) {
+  const url = new URL(self.location.href)
 
-  const contractAddress = url.searchParams.get("address")
-  const editionNumber = url.searchParams.get("id")
-
-  return {
-    contractAddress,
-    editionNumber,
-  }
+  return params.map(p => ({ [p]: url.searchParams.get(p) })).reduce((a, b) => ({ ...a, ...b }), {})
 }
 
 export async function fetchQuery(url, id) {
