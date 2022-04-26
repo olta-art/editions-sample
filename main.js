@@ -5,9 +5,9 @@ const EDITIONS_SUBGRAPH_API = "http://localhost:8000/subgraphs/name/olta-art/edi
 const EDITION_NO = 1
 const NFT_CONTRACT_ADDRESS = "0x8f66a247c29a2e4b32da14d94ee96fcae4964370"
 
-const params = getUrlParams()
-const contractAddress = params.contractAddress ?? NFT_CONTRACT_ADDRESS
-const editionNumber = parseInt(params.editionNumber ?? EDITION_NO, 10)
+const params = getUrlParams("id", "address")
+const contractAddress = params.address ?? NFT_CONTRACT_ADDRESS
+const editionNumber = parseInt(params.id ?? EDITION_NO, 10)
 
 ;(async () => {
   let tokens
