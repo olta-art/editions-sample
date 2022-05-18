@@ -17,8 +17,8 @@ import {
   // fetch data on all nfts for this edition
   let tokens = await fetchQuery(contractAddress)
 
-  // generate seededRandom function with a salt phrase and the seed
-  const seededRandom = generateSeededRandomness("not-so-random-seed-phrase",  theSeed)
+  // generate seededRandom function
+  const seededRandom = generateSeededRandomness(theSeed)
 
   // set up a 10x10 grid for 100 editions
   const cols = 10
