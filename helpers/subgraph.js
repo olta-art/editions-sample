@@ -3,7 +3,7 @@ import {createClient} from '@urql/core'
 // An example of how to fetch from olta's editions subgraph
 
 // Query the graph
-const editionsSubgraphAPI = "http://127.0.0.1:8000/subgraphs/name/olta-art/edtions-auction-subgraph"
+const editionsSubgraphAPI = "https://api.thegraph.com/subgraphs/name/olta-art/olta-editions-mumbai"
 
 const client = createClient({
   url: editionsSubgraphAPI
@@ -15,6 +15,7 @@ export const fetchQuery = async (contractAddress) => {
       query{
         tokenContract(id: "${contractAddress}") {
           tokens{
+            seed
             editionNumber
             owner{
               id
