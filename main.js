@@ -9,16 +9,10 @@ import {
 ;(async () => {
 
   // get url params
-  const {contractAddress, editionNumber, seed} = getUrlParams()
+  const {contractAddress, seed} = getUrlParams()
 
-  // fallback to edition number if seed param not present
-  const theSeed = seed != null ? seed : editionNumber
-
-  // fetch data on all nfts for this edition
+  // fetch data from subgraph on all nft's for the edition contract
   let tokens = await fetchQuery(contractAddress)
-
-  // generate seededRandom function
-  const seededRandom = generateSeededRandomness(theSeed)
 
   // set up a 10x10 grid for 100 editions
   const cols = 10
@@ -26,19 +20,16 @@ import {
 
   new p5(p => {
 
-    // create a background color using the seededRandom function
-    const background = p.color(seededRandom()* 255, seededRandom() * 255, seededRandom()* 255)
-
     const renderArtwork = () => {
 
       // resize the grid based on window size
       const gridWidth =  p.windowWidth * 0.75
       const gridHeight = p.windowHeight * 0.75
-      const cellWidth = gridWidth/rows
-      const cellHeight = gridHeight/cols
+      const squareWidth = gridWidth/rows
+      const squareHeight = gridHeight/cols
 
-      // draw the background with the seeded color
-      p.background(background)
+      // draw the background
+      p.background(10, 10, 10)
 
       p.push()
         // center the grid
@@ -49,37 +40,50 @@ import {
         p.noFill()
         p.rect(0, 0, gridWidth, gridHeight)
 
-        // draw dots
-        let count = 0
-        for (let i = 0; i < rows; i++) {
-          for (let j = 0; j < cols; j++) {
+        // keep trakc of the current square
+        let currentSquare = 0
+
+        // loop through grid
+        for (let y = 0; y < rows; y++) {
+          for (let x = 0; x < cols; x++) {
+
+            // find seed that matches the current square
+            // if not minted will be undifined
+            const token = tokens.find((token) => token.seed === `${currentSquare}`)
+
             // draw the grid
             p.push()
-              // center the cell
-              p.translate(j*cellWidth, i*cellHeight)
+              // center the square
+              p.translate(x*squareWidth, y*squareHeight)
 
+              // defualt square to transparent
               p.noFill()
-              if(tokens[count]){
-                // fill cell white if nft minted
-                p.fill(127)
 
-                // fill cell red if nft burnt
-                if(tokens[count].owner.id === "0x0000000000000000000000000000000000000000") p.fill(127, 0, 0)
+              if(token){
+                // generate square colour from owner address
+                const seededRandom = generateSeededRandomness(token.owner.id)
+                p.fill(seededRandom() * 255, seededRandom() * 255, seededRandom() * 255)
+
+                // if nft is burnt
+                if(token.owner.id === "0x0000000000000000000000000000000000000000"){
+                  // override generated square colour with red
+                  p.fill(127, 0, 0)
+                }
               }
 
-              // draw cell
-              p.rect(0, 0, cellWidth, cellHeight)
+              // draw square
+              p.rect(0, 0, squareWidth, squareHeight)
 
-              // draw a dot on the currnet edition
-              let isThisEdition = (editionNumber == count + 1)
-              if(isThisEdition) {
+              // draw a dot on the current seed
+              let isThisNft = (seed == currentSquare + 1)
+              if(isThisNft) {
                 p.fill(0,0,0)
-                p.ellipse(cellWidth/2, cellHeight/2, (cellWidth/2) * 0.8, (cellWidth/2) * 0.8)
+                p.ellipse(squareWidth/2, squareHeight/2, (squareWidth/2) * 0.8, (squareWidth/2) * 0.8)
               }
             p.pop()
 
-            // increment cell
-            count++
+            // update current square
+            currentSquare++
           }
         }
 
@@ -99,4 +103,5 @@ import {
     }
 
   }, document.getElementById('app'))
+
 })()
