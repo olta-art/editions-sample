@@ -3,7 +3,7 @@ import p5 from 'p5'
 import {
   getUrlParams,
   generateSeededRandomness,
-  fetchQuery
+  fetchTokenContract
 } from './helpers'
 
 ;(async () => {
@@ -12,7 +12,7 @@ import {
   const {contractAddress, seed} = getUrlParams()
 
   // fetch data from subgraph on all nft's for the edition contract
-  let tokens = await fetchQuery(contractAddress)
+  let tokens = await fetchTokenContract(contractAddress)
 
   // set up a 10x10 grid for 100 editions
   const cols = 10
