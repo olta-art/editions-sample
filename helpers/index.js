@@ -1,9 +1,9 @@
 import { getUrlParams } from './getUrlParams'
 import { generateSeededRandomness } from './seededRandomness'
-import { fetchQuery } from './subgraph'
+import { fetchTokens } from './subgraph'
 
 export {
   getUrlParams,
   generateSeededRandomness,
-  fetchQuery
+  fetchTokens
 }

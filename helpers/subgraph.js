@@ -7,7 +7,7 @@ const client = createClient({
 })
 
 // The query used in main.js
-export const fetchTokenContract = async (contractAddress) => {
+export const fetchTokens = async (contractAddress) => {
   try{
     const result = await client.query(`
       query{
