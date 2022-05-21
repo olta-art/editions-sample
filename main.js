@@ -41,7 +41,7 @@ import {
         p.rect(0, 0, gridWidth, gridHeight)
 
         // keep trakc of the current square
-        let currentSquare = 0
+        let currentSquare = 1
 
         // loop through grid
         for (let y = 0; y < rows; y++) {
@@ -75,8 +75,7 @@ import {
               p.rect(0, 0, squareWidth, squareHeight)
 
               // draw a dot on the current seed
-              let isThisNft = (seed == currentSquare + 1)
-              if(isThisNft) {
+              if(seed == currentSquare) {
                 p.fill(0,0,0)
                 p.ellipse(squareWidth/2, squareHeight/2, (squareWidth/2) * 0.8, (squareWidth/2) * 0.8)
               }
