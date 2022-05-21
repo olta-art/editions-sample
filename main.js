@@ -1,13 +1,10 @@
-import './style.css'
-import p5 from 'p5'
 import {
   getUrlParams,
   generateSeededRandomness,
   fetchTokens
-} from './helpers'
+} from './helpers/index.js'
 
 ;(async () => {
-
   // get url params
   const {contractAddress, seed} = getUrlParams()
 

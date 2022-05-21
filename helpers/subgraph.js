@@ -1,15 +1,15 @@
-import {createClient} from '@urql/core'
+// import {createClient} from '@urql/core'
 
 const editionsSubgraphAPI = "https://api.thegraph.com/subgraphs/name/olta-art/olta-editions-mumbai"
 
-const client = createClient({
-  url: editionsSubgraphAPI
-})
+// const client = createClient({
+//   url: editionsSubgraphAPI
+// })
 
 // The query used in main.js
 export const fetchTokens = async (contractAddress) => {
   try{
-    const result = await client.query(`
+    const result = await fetchQuery(editionsSubgraphAPI, `
       query{
         tokenContract(id: "${contractAddress}") {
           tokens{
@@ -21,8 +21,8 @@ export const fetchTokens = async (contractAddress) => {
           }
         }
       }
-    `
-    ).toPromise()
+    `)
+
     return result.data.tokenContract.tokens
   } catch {
     console.error("Error")
@@ -38,7 +38,7 @@ export const fetchTokens = async (contractAddress) => {
 // fetch a specific token
 export const fetchToken = async (contractAddress, editionNumber) => {
   try{
-    const result = await client.query(`
+    const result = await fetchQuery(editionsSubgraphAPI, `
       query{
         token(id: "${contractAddress}-${editionNumber}") {
           tokenURI
@@ -66,8 +66,8 @@ export const fetchToken = async (contractAddress, editionNumber) => {
           }
         }
       }
-    `
-    ).toPromise()
+    `)
+
     return result.data.token
   } catch {
     console.error("Error")
@@ -77,8 +77,8 @@ export const fetchToken = async (contractAddress, editionNumber) => {
 
 // fetch a specific token from seed
 export const fetchTokenFromSeed = async (contractAddress, seed) => {
-  try{
-    const result = await client.query(`
+  try {
+    const result = await fetchQuery(editionsSubgraphAPI, `
       query{
         tokens(where: {tokenContract: "${contractAddress}" seed: "${seed}"}) {
           tokenURI
@@ -106,8 +106,8 @@ export const fetchTokenFromSeed = async (contractAddress, seed) => {
           }
         }
       }
-    `
-    ).toPromise()
+    `)
+
     return result.data.tokens[0]
   } catch {
     console.error("Error")
@@ -117,8 +117,8 @@ export const fetchTokenFromSeed = async (contractAddress, seed) => {
 
 // fetch token contract
 export const fetchTokenContract = async (contractAddress) => {
-  try{
-    const result = await client.query(`
+  try {
+    const result = await fetchQuery(editionsSubgraphAPI, `
       query{
         tokenContract(id: "${contractAddress}") {
         createdAtBlockNumber
@@ -154,8 +154,8 @@ export const fetchTokenContract = async (contractAddress) => {
           id
         }
       }
-    `
-    ).toPromise()
+    `)
+
     return result.data.tokenContract
   } catch {
     console.error("Error")
@@ -167,8 +167,8 @@ export const fetchTokenContract = async (contractAddress) => {
 // collection = tokens[]
 // creations = tokenContracts[]
 export const fetchUser = async (userId) => {
-  try{
-    const result = await client.query(`
+  try {
+    const result = await fetchQuery(editionsSubgraphAPI, `
       query{
         user(id:"${userId}") {
         collection{
@@ -183,11 +183,66 @@ export const fetchUser = async (userId) => {
           description
         }
       }
-    `
-    ).toPromise()
+    `)
+
     return result.data.user
   } catch {
     console.error("Error")
     return []
+  }
+}
+
+export async function fetchQuery(url, query) {
+  const download = downloader(20000)
+  const options = {
+    body: JSON.stringify({ query }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "post",
+  }
+
+  try {
+    const response = await download(url, options)
+
+    response?.errors?.forEach((e) => {
+      throw new Error(e.message)
+    })
+
+    return response?.data?.tokenContract?.tokens
+  } catch (e) {
+    throw e
+  }
+}
+
+export function downloader(timeout = 100 * 1000) {
+  return async (url = "", options = {}) => {
+    // Guard against unresponsive calls.
+    const controller = new AbortController()
+
+    const timer = setTimeout(() => {
+      clearTimeout(timer)
+      controller.abort()
+    }, timeout)
+
+    try {
+      const response = await fetch(url, {
+        signal: controller.signal,
+        ...options,
+      })
+
+      const result = await response.json()
+
+      if (response.ok) {
+        return result
+      } else {
+        const { message } = result.errors.pop()
+
+        throw new Error(message)
+      }
+    } catch (e) {
+      // Forward to caller.
+      throw e
+    }
   }
 }

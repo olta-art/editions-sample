@@ -1,13 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Artwork Title</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.1/p5.min.js"></script>
+    <script type="module" src="main.js"></script>
+    <style>
+      body {
+        height: 100vh;
+        margin: 0;
+      }
+      canvas {
+        /* github.com/processing/p5.js/wiki/Positioning-your-canvas#making-the-canvas-fill-the-window */
+        display: block;
+      }
+    </style>
   </head>
   <body>
     <div id="app"></div>
-    <script type="module" src="/main.js"></script>
   </body>
 </html>
