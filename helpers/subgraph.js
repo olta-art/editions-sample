@@ -36,11 +36,11 @@ export const fetchTokens = async (contractAddress) => {
 // EXAMPLES
 
 // fetch a specific token
-export const fetchToken = async (contractAddress, id) => {
+export const fetchToken = async (contractAddress, editionNumber) => {
   try{
     const result = await client.query(`
       query{
-        token(id: "${contractAddress}-${id}") {
+        token(id: "${contractAddress}-${editionNumber}") {
           tokenURI
           seed
           id

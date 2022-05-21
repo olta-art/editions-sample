@@ -1,12 +1,16 @@
 # Example Artwork [WIP]
 
-This is an example artwork demonstrates how to use olta's editions contracts and subgraph api to create dynamic NFT's.
+This is an example artwork demonstrates how to use olta's seeded editions contracts and subgraph api to create dynamic NFT's.
 
-It is intended to use 
+<img src="./assets/example-artwork.png" alt="example-artwork" width="200"/> 
 
-The setup uses vite, p5.js and urql, but feel free to use what ever frameworks you desire.
-
-for an overview of olta editions [visit here](TODO :add link)
+## What does this artwork do?
+- Displays a grid of 100 squares representing 100 editions
+- Each edition is represesnted by a square
+- A black dot represents the current edition
+- un-minted editions have a transparent background
+- minted editions have a background color generated from owner address
+- burnt editions have a background color of red
 
 ---
 
@@ -30,35 +34,21 @@ for an overview of olta editions [visit here](TODO :add link)
    yarn dev
    ```
 
-4. [visit url with params](http://localhost:3000/?id=1&seed=5&address=0x8f66a247c29a2e4b32da14d94ee96fcae4964370)
+4. visit url with params: [http://localhost:3000/?id=1&seed=5&address=0x660791e6cdb112fc5246bd594a0adb7c2c2586da](http://localhost:3000/?id=1&seed=5&address=0x660791e6cdb112fc5246bd594a0adb7c2c2586da)
 
-## What does this artwork do?
-- displays a grid of 100 cells representing 100 editions
-- The background color is generated based on the seed
-- A black dot is drawn on the cell of the current edition
-- the cell of un-minted editions have a transparent background
-- the cell of minted editions have a grey background
-- the cell of burnt editions have a red background
-
-for example:
-|   |   |   |
-|---|---|---|
-| edition #1 with a seed of 8 looks like: | edition #1, when minted, looks  like: | edition #2, minted with a seed of 33, looks like: |
-| <img src="./assets/edition-1-seed-8.png" alt="drawing" width="200"/> | <img src="./assets/edition-1-seed-8-minted.png" alt="drawing" width="200"/> | <img src="./assets/edition-2-seed-33-minted.png" alt="drawing" width="200"/> |
-| edition #1, when edition #2 is minted, looks like: | edition #1, with edition #2 burnt, looks like: | edition #2 look like this: |
-| <img src="./assets/edition-1-seed-8-minted-edition-2-minted.png" alt="drawing" width="200"/> | <img src="./assets/edition-1-seed-8-minted-edition-2-burnt.png" alt="drawing" width="200"/> | <img src="./assets/edition-2-seed-33-burnt-edition-1-minted.png" alt="drawing" width="200"/> |
 
 Take a look at `main.js` to see how this is implemented
 
 ---
 
 
-
 ## Helpers
-There are four simple helper functions that help to work with olta editions. see main.js for examples of how they can be used.
+There are four helper functions that you can use to help you work with olta editions: getUrlParams, seededRandomness and fetchTokens
+each one is explained below and see main.js for examples of how they can be used.
 
-### getUrlParams()
-gets the url parameters using the [URLSearchParams api](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams)
+## getUrlParams()
+When an edition is minted it's url contains specfic data about the edition. To access that data in the artwork we can use getUrlParams().
+It simply gets the url parameters using the [URLSearchParams api](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams)
 
 Example:
 
@@ -69,47 +59,46 @@ const { editionNumber, seed, contractAddress } = getUrlParams()
 ```
 
 Returns an object with the following:
-> | Name | Type | Value |
-> |---|---|---|
-> | editionNumber | number | between 1 and the edition size |
->
-> This is the edition number. When the editions are minted this number is incremented each time. This is useful for querying the editions subgraph to find out infomation specifically about this edition. It can be used to create variation but note the collector will not have any choice and simply get the next edition in the sequence.
 
-> | Name | Type | Value |
-> |---|---|---|
-> | seed | number | between 1 and the edition size |
->
-> **NOTE:** The seed paramerter is only availble in the seeded Editions implementation, this can be chosen by ticking the "seeded" tickbox on the mint form.
->
-> Helpful for generating variation between editions, when used with generateSeededRandomness(), see below. The seed is also intened to give collectors choice when minting an edition. When minting you can choose any seed that is available. for example edition #1 can be minted with a seed of 8. Once a seed has been minted it can not be chosen again.
+| Name | Type | Value |
+|---|---|---|
+| editionNumber | number | between 1 and the edition size |
+| seed | number or null | between 1 and the edition size |
+| contractAddress | string | the address of the edition smart-contract |
 
-> | Name | Type | Value |
-> |---|---|---|
-> | contractAddress | string | the address of the edition smart-contract |
->
-> Useful for querying the editions subgraph in finding this edition. Each edition series is linked to a specific smart-contract. So combining the edition contract address with the id you can query that specific edition nft. But this also allows you to query for data about the whole edition series.
+The editionNumber parameter is useful for querying the Olta subgraph to relate specific blockchain data back to each edition. see subgraph.js fetchToken() for example query.
 
-### seededRandomness(number, seedPhrase*)
+The seed is helpful for generating variation between editions. Collectors have the ability to purchase any specific seed if still available. Note, this is only availble in the seeded implementation, this can be chosen by ticking the "seeded" tickbox on the mint form. Will return null if not seeded.
 
-takes a number, for exmple the seed, and an optional phrase
+The contractAddress is useful for querying the editions subgraph. Each edition series is linked to a specific smart-contract. see subgraph.js fetchTokenContract() for an example
+
+## seededRandomness(seed, seedPhrase*)
+
+Takes a seed and an optional seedPhrase and returns a funciton that acts similary to [Math.random()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random) but is determanistic.
+
+The seed can be a number or string. The same seed will result in the same sequence of random numbers. The optional seedPhrase is used to offset the sequence.
 
 example:
 ```js
 import { generateSeededRandomness } from "./helpers"
 
-const rand = generateSeededRandomness(5)
+const seededRandom = generateSeededRandomness(5)
 
-rand() // outputs 0.1
-rand() // outputs 0.5
-rand() // outputs 0.9
+seededRandom() // 1st time will always output 0.1
+seededRandom() // 2nd time will always output 0.5
+seededRandom() // 3nd time will always output 0.9
+
+// ... and so on.
 ```
 
-### fetchQuery(editionsAddress)
-TODO: explain function
+In this artwork it is used to generate the color for the squares by parsing in the owner address of the edition.
 
-### createDummyData(isSeeded)
-TODO: create dummy data function that can mint, transfer, and burn artworks
-used to easily simulate data from the api without having to change stuff on the blockchain.
+### fetchTokens(contractAddress)
+
+fetchTokens makes a graphql request to the editions subgraph and returns data on all of the minted tokens for that perticular contract address. We get the contract address by using the getUrlParams() function
+
+For more examples of querys see /helpers/subgraph.js
+To explore the subgraph api: [api.thegraph.com/subgraphs/name/olta-art/olta-editions-mumbai/graphql](https://api.thegraph.com/subgraphs/name/olta-art/olta-editions-mumbai/graphql)
 
 ---
 
@@ -119,3 +108,17 @@ used to easily simulate data from the api without having to change stuff on the 
 
 for the easiest go with surge
 if you a comftable with git / github you can go with vercel or heroku
+
+# Mint
+
+note down the deployment url and head over to
+
+
+# Dive deeper
+
+The source code for the contracts can be found here:
+Editions
+Auction
+
+The source code for the subgraph can be found here
+Editions Subgraph
