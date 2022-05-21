@@ -38,6 +38,7 @@ For an overview of editions and the hackday please see the [Docs](https://docs.g
 
 4. visit url with params: [http://localhost:3000/?id=1&seed=5&address=0x660791e6cdb112fc5246bd594a0adb7c2c2586da](http://localhost:3000/?id=1&seed=5&address=0x660791e6cdb112fc5246bd594a0adb7c2c2586da)
 
+or add this to the end of your url: ?id=1&seed=5&address=0x660791e6cdb112fc5246bd594a0adb7c2c2586da
 
 Take a look at `main.js` to see how this is implemented
 

@@ -1,10 +1,4 @@
-// import {createClient} from '@urql/core'
-
 const editionsSubgraphAPI = "https://api.thegraph.com/subgraphs/name/olta-art/olta-editions-mumbai"
-
-// const client = createClient({
-//   url: editionsSubgraphAPI
-// })
 
 // The query used in main.js
 export const fetchTokens = async (contractAddress) => {
@@ -23,7 +17,7 @@ export const fetchTokens = async (contractAddress) => {
       }
     `)
 
-    return result.data.tokenContract.tokens
+    return result.tokenContract.tokens
   } catch {
     console.error("Error")
     return []
@@ -68,7 +62,7 @@ export const fetchToken = async (contractAddress, editionNumber) => {
       }
     `)
 
-    return result.data.token
+    return result.token
   } catch {
     console.error("Error")
     return []
@@ -108,7 +102,7 @@ export const fetchTokenFromSeed = async (contractAddress, seed) => {
       }
     `)
 
-    return result.data.tokens[0]
+    return result.tokens[0]
   } catch {
     console.error("Error")
     return []
@@ -156,7 +150,7 @@ export const fetchTokenContract = async (contractAddress) => {
       }
     `)
 
-    return result.data.tokenContract
+    return result.tokenContract
   } catch {
     console.error("Error")
     return []
@@ -185,7 +179,7 @@ export const fetchUser = async (userId) => {
       }
     `)
 
-    return result.data.user
+    return result.user
   } catch {
     console.error("Error")
     return []
@@ -209,7 +203,7 @@ export async function fetchQuery(url, query) {
       throw new Error(e.message)
     })
 
-    return response?.data?.tokenContract?.tokens
+    return response?.data
   } catch (e) {
     throw e
   }
