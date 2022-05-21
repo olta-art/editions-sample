@@ -2,6 +2,8 @@
 
 This is an example artwork demonstrates how to use olta's seeded editions contracts and subgraph api to create dynamic NFT's.
 
+For an overview of editions and the hackday please see the [Docs](https://docs.google.com/document/d/e/2PACX-1vQWkxuSKm9-04ya0lVYsn-P3qaIOu8ipDA0_sz_-csjlRB1PDA4ecQM65XZgt_1R4amcx2Bn0thTeT3/pub)
+
 <img src="./assets/example-artwork.png" alt="example-artwork" width="200"/> 
 
 ## What does this artwork do?
@@ -111,14 +113,15 @@ if you a comftable with git / github you can go with vercel or heroku
 
 # Mint
 
-note down the deployment url and head over to
+Please see the how to's section of the [Docs](https://docs.google.com/document/d/e/2PACX-1vQWkxuSKm9-04ya0lVYsn-P3qaIOu8ipDA0_sz_-csjlRB1PDA4ecQM65XZgt_1R4amcx2Bn0thTeT3/pub)
+Head over to [hackday website](http://shiny-bassoon.surge.sh/create.html)
 
 
 # Dive deeper
 
 The source code for the contracts can be found here:
-Editions
-Auction
+[Editions](https://github.com/olta-art/olta-nft-editions)
+[Auction](https://github.com/olta-art/editions-auction)
 
 The source code for the subgraph can be found here
-Editions Subgraph
+[Editions Subgraph](https://github.com/olta-art/editions-subgraph)
